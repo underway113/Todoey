@@ -10,13 +10,44 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    let itemArray = ["Shop", "Eat", "Repeat"]
+    var itemArray = ["Shop", "Eat", "Repeat"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
     }
 
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        var textField = UITextField()
+        
+        //Add Alert
+        let alert = UIAlertController(title: "Add new Todoey Item", message: "", preferredStyle: .alert)
+        
+        //Add TextField to Alert
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Item Name"
+            textField = alertTextField
+        }
+        
+        //Add Add Action (Button in Alert)
+        let alertAddAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            //Add new item to item Array
+            self.itemArray.append(textField.text!)
+            
+            //Reload Table View
+            self.tableView.reloadData()
+            
+        }
+        
+        // Attach action to alert
+        alert.addAction(alertAddAction)
+        
+        //Show alert to user
+        present(alert, animated: true, completion: nil)
+        
+        
+    }
+    
     //MARK - TableView Datasource Methods
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
          let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
@@ -30,9 +61,6 @@ class TodoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        print("Click Cell \(itemArray[indexPath.row])")
-//        
-//        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         
         if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
@@ -45,10 +73,6 @@ class TodoListViewController: UITableViewController {
         
         
     }
-//    
-//    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-//        print("Deselect Cell \(itemArray[indexPath.row])")
-//    }
 
 }
 
