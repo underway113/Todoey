@@ -86,12 +86,15 @@ class TodoListViewController: UITableViewController {
         
         cell.textLabel?.text = itemArray[indexPath.row].title
         
-        if itemArray[indexPath.row].status {
-            cell.accessoryType = .checkmark
-        }
-        else {
-            cell.accessoryType = .none
-        }
+        
+        cell.accessoryType = itemArray[indexPath.row].status == true ? .checkmark : .none
+        
+//        if itemArray[indexPath.row].status {
+//            cell.accessoryType = .checkmark
+//        }
+//        else {
+//            cell.accessoryType = .none
+//        }
         
         return cell
     }
