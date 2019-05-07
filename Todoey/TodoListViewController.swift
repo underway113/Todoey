@@ -12,8 +12,14 @@ class TodoListViewController: UITableViewController {
     
     var itemArray = ["Shop", "Eat", "Repeat"]
     
+    let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let items = defaults.value(forKey: "ToDoListItem") as? [String] {
+            itemArray = items
+        }
         
     }
 
@@ -33,6 +39,8 @@ class TodoListViewController: UITableViewController {
         let alertAddAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
             //Add new item to item Array
             self.itemArray.append(textField.text!)
+            
+            self.defaults.setValue(self.itemArray, forKey: "ToDoListItem")
             
             //Reload Table View
             self.tableView.reloadData()
