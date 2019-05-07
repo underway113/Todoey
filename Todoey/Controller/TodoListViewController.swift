@@ -7,41 +7,18 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
     
-    var itemArray = [ToDoModel]()
+    var itemArray = [Item]()
     let keyDefaultToDoList = "ToDoListItem"
     let defaults = UserDefaults.standard
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        var newItem = ToDoModel("Eating", false)
-        itemArray.append(newItem)
-        newItem = ToDoModel("Eating1", false)
-        itemArray.append(newItem)
-        newItem = ToDoModel("Eating2", false)
-        itemArray.append(newItem)
-        newItem = ToDoModel("Eating3", false)
-        itemArray.append(newItem)
-        newItem = ToDoModel("Eating4", false)
-        itemArray.append(newItem)
-        newItem = ToDoModel("Eating5", false)
-        itemArray.append(newItem)
-        newItem = ToDoModel("Eating6", false)
-        itemArray.append(newItem)
-        newItem = ToDoModel("Eating7", false)
-        itemArray.append(newItem)
-        newItem = ToDoModel("Eating8", false)
-        itemArray.append(newItem)
-        newItem = ToDoModel("Eating9", false)
-        itemArray.append(newItem)
-        
-        
-//        if let items = defaults.value(forKey: keyDefaultToDoList) as? [String] {
-//            itemArray = items
-//        }
         
     }
 
@@ -60,15 +37,15 @@ class TodoListViewController: UITableViewController {
         //Add Add Action (Button in Alert)
         let alertAddAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
             
-            let newItem = ToDoModel(textField.text!, false)
+            let newItem = Item(context: self.context)
+            newItem.title = textField.text!
+            newItem.status = false
+            
             //Add new item to item Array
             self.itemArray.append(newItem)
             
-//            self.defaults.setValue(self.itemArray, forKey: self.keyDefaultToDoList)
-            
-            //Reload Table View
-            self.tableView.reloadData()
-            
+            //Save Item to CoreData and Reload Table View
+            self.saveItems()
         }
         
         // Attach action to alert
@@ -89,13 +66,6 @@ class TodoListViewController: UITableViewController {
         
         cell.accessoryType = itemArray[indexPath.row].status == true ? .checkmark : .none
         
-//        if itemArray[indexPath.row].status {
-//            cell.accessoryType = .checkmark
-//        }
-//        else {
-//            cell.accessoryType = .none
-//        }
-        
         return cell
     }
     
@@ -115,5 +85,17 @@ class TodoListViewController: UITableViewController {
         
     }
 
+    
+    func saveItems() {
+        do {
+            try context.save()
+        }
+        catch {
+            print("Error Saving Context \(error)")
+        }
+        
+        self.tableView.reloadData()
+    }
+    
 }
 
