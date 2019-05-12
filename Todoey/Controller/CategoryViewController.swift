@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     
@@ -45,11 +45,14 @@ class CategoryViewController: UITableViewController {
         super.viewDidLoad()
         
         loadCategories()
+        
+        tableView.rowHeight = 100
     }
 
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         cell.textLabel?.text = categories?[indexPath.row].name ?? "No Category"
         
@@ -70,7 +73,7 @@ class CategoryViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! TodoListViewController
-        
+//        print(tableView.index)
         if let indexPath = tableView.indexPathForSelectedRow {
             destinationVC.selectedCategory = categories?[indexPath.row]
         }
@@ -90,11 +93,28 @@ class CategoryViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    //Load Items parameter using default value using = xxxx
+    //Load Items
     func loadCategories() {
        
         categories = realm.objects(Category.self)
         
         self.tableView.reloadData()
+    }
+    
+    //Delete Data
+    override func updateModel(at indexPath: IndexPath) {
+        
+        //DELETION Realm
+        if let deleteSelectedCategory = self.categories?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(deleteSelectedCategory)
+                    print("Success Deleted")
+                }
+            }
+            catch {
+                print("Error while delete, \(error)")
+            }
+        }
     }
 }

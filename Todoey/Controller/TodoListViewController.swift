@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
     
     
     //MARK: - Variable
@@ -28,6 +28,7 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     
+        tableView.rowHeight = 100
     }
     
     //When Plus + button Pressed
@@ -79,7 +80,9 @@ class TodoListViewController: UITableViewController {
     
     //Cell For Row At
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
         if let item = toDoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
@@ -102,7 +105,6 @@ class TodoListViewController: UITableViewController {
         if let currentRow = toDoItems?[indexPath.row] {
             do {
                 try realm.write {
-//                    realm.delete(currentRow)
                     currentRow.status = !currentRow.status
                 }
             } catch {
@@ -126,6 +128,24 @@ class TodoListViewController: UITableViewController {
         toDoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         
         self.tableView.reloadData()
+    }
+    
+    
+    //Delete Data
+    override func updateModel(at indexPath: IndexPath) {
+        
+        //DELETION Realm
+        if let deleteSelectedItem = self.toDoItems?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(deleteSelectedItem)
+                    print("Success Deleted")
+                }
+            }
+            catch {
+                print("Error while delete, \(error)")
+            }
+        }
     }
 }
 
