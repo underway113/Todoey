@@ -25,12 +25,33 @@ class TodoListViewController: SwipeTableViewController {
     let realm = try! Realm()
     let keyDefaultToDoList = "ToDoListItem"
     let defaults = UserDefaults.standard
-
+    @IBOutlet weak var searchBarItems: UISearchBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     
         tableView.rowHeight = 100
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        title = selectedCategory?.name
+        
+        updateNavBar(selectedCategory!.bgColorHex)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        updateNavBar("1D9BF6")
+    }
+    
+    //Nav bar color Func
+    func updateNavBar(_ hexCodeColor:String) {
+        guard let navBar = navigationController?.navigationBar  else {fatalError()}
+        guard let color = UIColor(hexString: hexCodeColor) else {fatalError()}
+        navBar.tintColor = ContrastColorOf(backgroundColor: color, returnFlat: true)
+        navBar.barTintColor = color
+        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(backgroundColor: color, returnFlat: true)]
+    }
+    
     
     //When Plus + button Pressed
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
